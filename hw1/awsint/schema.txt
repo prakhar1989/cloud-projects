@@ -1,0 +1,41 @@
+({:reservation 
+    {:reservation-id r-3b0889c6, :group-names [], :groups [], 
+    :instances [
+        {
+        :monitoring {:state disabled}, 
+        :tags [], :root-device-type ebs, 
+        :private-dns-name ip-172-31-4-239.ec2.internal, :hypervisor xen, :subnet-id subnet-9a5f79ed, 
+        :key-name awshw1, :architecture x86_64, 
+        :security-groups [{:group-name awshw1, :group-id sg-24203b43}], 
+        :source-dest-check true, 
+        :root-device-name /dev/xvda, 
+        :virtualization-type hvm, 
+        :product-codes [], :instance-type t2.micro, :ami-launch-index 0, 
+        :image-id ami-e3106686, 
+        :state {:name pending, :code 0}, 
+        :state-transition-reason , 
+        :network-interfaces [
+                {:description , :private-dns-name ip-172-31-4-239.ec2.internal, 
+                 :subnet-id subnet-9a5f79ed, :source-dest-check true, 
+                 :private-ip-addresses [{
+                        :private-ip-address 172.31.4.239, :primary true, :private-dns-name ip-172-31-4-239.ec2.internal
+                 }], 
+                 :network-interface-id eni-d9d5d393, 
+                 :vpc-id vpc-1fb1a77a, :mac-address 0a:ed:63:a2:56:ff, :status in-use, 
+                 :private-ip-address 172.31.4.239, 
+                 :owner-id 685580971598, 
+                 :groups [{:group-name awshw1, :group-id sg-24203b43}], 
+                 :attachment {:device-index 0, :status attaching, :attachment-id eni-attach-4be8312c, 
+                 :attach-time #object[org.joda.time.DateTime 0x6892cc6f 2015-09-25T01:25:38.000-04:00], :delete-on-termination true}}
+        ], 
+        :vpc-id vpc-1fb1a77a, 
+        :ebs-optimized false, 
+        :instance-id i-bcb8ef69, 
+        :state-reason {:message pending, :code pending}, 
+        :public-dns-name , 
+        :private-ip-address 172.31.4.239, 
+        :placement {:group-name , :availability-zone us-east-1d, :tenancy default}, 
+        :client-token b63c0456-f5ca-48d2-a0c6-0aa35989cedd, 
+        :launch-time #object[org.joda.time.DateTime 0x6fd1660 2015-09-25T01:25:38.000-04:00], :block-device-mappings []}], 
+        :owner-id 685580971598}
+})
