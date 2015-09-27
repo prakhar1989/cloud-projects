@@ -1,4 +1,6 @@
 /target
+.idea/
+awsint.iml
 /classes
 /checkouts
 pom.xml
