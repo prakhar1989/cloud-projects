@@ -25,17 +25,21 @@
                  :group-name name :ip-permissions (map get-perms '(80 443 22)))] 
     id))
 
-(defn get-public-ip [instance-id]
-  "gets the public ip of instance. Retries every 30 secs if not available"
-  (let [meta-data (ec2/describe-instances :instance-id instance-id)
-        instance (get-in meta-data [:reservations 0 :instances 0])
-        {:keys [state public-dns-name]} instance]
-    (if (= "stopped" (:name state)) "Error: Instance is stopped"
-      (if (not (empty? public-dns-name)) public-dns-name
-        (do
-          (println "IP for instance is not yet ready.. trying again in 30secs")
-          (Thread/sleep 30000)
-          (get-public-ip instance-id))))))
+(defn get-public-ip
+  "gets the public ip of an EC2 instance."
+  ([instance-id]
+    (get-public-ip instance-id 15))                       ; 15 sec backoff initially
+  ([instance-id backoff]
+   (let [meta-data (ec2/describe-instances :instance-ids [instance-id])
+         instance (get-in meta-data [:reservations 0 :instances 0])
+         {:keys [state public-dns-name]} instance]
+     (if (or (= "stopped" (:name state)) (= "terminated" :name state))
+       "Error: Instance is stopped or termnimated."
+       (if (not (empty? public-dns-name)) public-dns-name
+          (do
+            (println (str "IP for instance is not yet ready... trying again in " backoff "secs"))
+            (Thread/sleep (* 1000 backoff))
+            (get-public-ip instance-id (* 2 backoff)))))))) ; exponential backoff for subsequent tries
 
 (defn build-instance [name]
   "creates the instance and returns details (including public-ip)"
@@ -45,10 +49,18 @@
         {:keys [instance-id private-ip-address]} (get-in instance [:reservation :instances 0])
         public-dns-name (get-public-ip instance-id)]
     {:file-path file-path
+     :instance-id instance-id
      :public-dns-name public-dns-name
-     :private-ip private-ip-address}))
+     :private-ip-address private-ip-address}))
 
 (defn -main [& args]
   (if (zero? (count args))
     (println "Error: please provide a name for your instance.")
-    ))
+    (do
+      (println "Your instance is being built. \nPlease wait before all network interfaces are attached...")
+      (let [{:keys [file-path instance-id public-dns-name
+                    private-ip-address]} (build-instance (first args))]
+        (do
+          (println (str "Your instance is now ready with ID: " instance-id
+                        " & private IP Address: " private-ip-address))
+          (println (str "To login: ssh -i " file-path " ec2-user@" public-dns-name)))))))
