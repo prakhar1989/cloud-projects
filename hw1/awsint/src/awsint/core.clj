@@ -1,6 +1,7 @@
 (ns awsint.core
   (:gen-class)
-  (:require [amazonica.aws.ec2 :as ec2]))
+  (:require [amazonica.aws.ec2 :as ec2]
+            [me.raynes.fs :as fs]))
 
 (defn setup-instance [key-name group-id]
   "creates an instance with associated keyname and group-id"
@@ -48,6 +49,9 @@
         instance (setup-instance name group-id)
         {:keys [instance-id private-ip-address]} (get-in instance [:reservation :instances 0])
         public-dns-name (get-public-ip instance-id)]
+    (do 
+      (fs/chmod "-rxw" file-path)
+      (fs/chmod "u+r" file-path))
     {:file-path file-path
      :instance-id instance-id
      :public-dns-name public-dns-name
@@ -57,10 +61,13 @@
   (if (zero? (count args))
     (println "Error: please provide a name for your instance.")
     (do
-      (println "Your instance is being built. \nPlease wait before all network interfaces are attached...")
+      (println (str "Your instance is being built with keypair: " (first args)
+                    ".pem and security group - " (first args) ".")
+               "\nPlease wait before all network interfaces are attached...")
       (let [{:keys [file-path instance-id public-dns-name
                     private-ip-address]} (build-instance (first args))]
         (do
+          (println (clojure.string/join (take 40 (repeat "-"))))
           (println (str "Your instance is now ready with ID: " instance-id
                         " & private IP Address: " private-ip-address))
           (println (str "To login: ssh -i " file-path " ec2-user@" public-dns-name)))))))
