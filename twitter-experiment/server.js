@@ -1,4 +1,37 @@
 var r = require('rethinkdb');
+var app = require('express')();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+
+// read in the config
+var config = require(__dirname + '/config.js');
+
+// setup static content
+app.use(express.static(__dirname + "/public"));
+app.use(bodyParser());
+
+
+/*
+app.get('/', function(req, res) {
+    res.sendFile(__dirname + '/index.html');
+});
+
+io.on('connection', function(socket) {
+    console.log("a user command");
+    socket.broadcast.emit('hi');
+
+    socket.on('disconnect', function() {
+        console.log('user disconnected');
+    });
+
+    socket.on('chat message', function(msg) {
+        io.emit('chat message', "Prakhar: " +  msg);
+    });
+});
+
+http.listen(3000, function() {
+    console.log('listening on 3000');
+});
 
 /*
 r.connect({host: '127.0.0.1', port: 28015}, function(err, conn) {
@@ -23,4 +56,3 @@ r.connect({host: '127.0.0.1', port: 28015}, function(err, conn) {
 });
 */
 
-console.log("hello world");

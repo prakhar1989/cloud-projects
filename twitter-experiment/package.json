@@ -4,7 +4,9 @@
   "description": "class assignment",
   "main": "server.js",
   "dependencies": {
+    "express": "^4.13.3",
     "rethinkdb": "^2.1.1",
+    "socket.io": "^1.3.7",
     "twitter": "^1.2.5"
   },
   "devDependencies": {},
