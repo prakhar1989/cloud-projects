@@ -57,6 +57,17 @@
      :public-dns-name public-dns-name
      :private-ip-address private-ip-address}))
 
+
+(defn index-of-any
+  "Java indexOfAny to Clojure"
+  [s coll]
+  (let [indexed (fn [coll] (map-indexed vector coll))
+        index-filter (fn [pred coll]
+                       (when pred
+                         (for [[idx elt] (indexed coll) :when (pred elt)] idx)))]
+    (first (index-filter s coll))))
+
+
 (defn -main [& args]
   (if (zero? (count args))
     (println "Error: please provide a name for your instance.")
