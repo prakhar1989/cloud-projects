@@ -1,58 +1,58 @@
 var r = require('rethinkdb');
-var app = require('express')();
+var express = require('express');
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var bodyParser = require('body-parser');
+var app = express();
 
 // read in the config
 var config = require(__dirname + '/config.js');
 
 // setup static content
 app.use(express.static(__dirname + "/public"));
-app.use(bodyParser());
 
+// parse application/json
+app.use(bodyParser.json());
 
-/*
-app.get('/', function(req, res) {
-    res.sendFile(__dirname + '/index.html');
-});
+// middleware that gets the connection to the db
+// and makes it available to the request object
+function createConnection(req, res, next) {
+    r.connect(config.rethinkdb).then(function(conn) {
+        req._rdbConn = conn;
+        next();
+    }).error(handleError(res));
+}
 
-io.on('connection', function(socket) {
-    console.log("a user command");
-    socket.broadcast.emit('hi');
+// middleware that closes the connection
+function closeConnection(req, res, next) {
+    req._rdbConn.close();
+}
 
-    socket.on('disconnect', function() {
-        console.log('user disconnected');
-    });
+// handle 500 gracefully
+function handleError(res) {
+    return function(error) {
+        res.send(500, {error: error.message});
+    }
+}
 
-    socket.on('chat message', function(msg) {
-        io.emit('chat message', "Prakhar: " +  msg);
-    });
-});
+app.use(createConnection);
 
-http.listen(3000, function() {
+app.route('/tweets').get(getTweets);
+
+app.use(closeConnection);
+
+// routes
+function getTweets(req, res, next) {
+    r.table(config.rethinkdb.table).pluck(['id_str', 'geo'])
+        .run(req._rdbConn).then(function(cursor) {
+            return cursor.toArray();
+        }).then(function(result) {
+            res.send(JSON.stringify(result));
+        }).error(handleError(res))
+        .finally(next);
+}
+
+// start listening
+app.listen(config.express.port, function() {
     console.log('listening on 3000');
 });
-
-/*
-r.connect({host: '127.0.0.1', port: 28015}, function(err, conn) {
-    if (err) throw err;
-    var connection = conn;
-
-    r.db('twitter_streaming').table('jstwitter').pluck(['id_str', 'geo'])
-        .run(connection, function(err, cursor) {
-            cursor.toArray(function(err, result) {
-                if (err) throw err;
-                console.log(JSON.stringify(result, null, 2));
-            });
-    });
-    r.db('twitter_streaming').table('jstwitter').changes()
-        .run(connection, function(err, cursor) {
-            if (err) throw err;
-            cursor.each(function(err, row) {
-                if (err) throw err;
-                console.log(JSON.stringify(row, null, 2));
-            });
-        })
-});
-*/
-
