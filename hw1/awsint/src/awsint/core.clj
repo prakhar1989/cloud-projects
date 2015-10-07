@@ -5,7 +5,7 @@
 
 (defn setup-instance [key-name group-id]
   "creates an instance with associated keyname and group-id"
-  (ec2/run-instances :image-id "ami-e3106686" :min-count 1 :max-count 1
+  (ec2/run-instances :image-id "ami-d05e75b8" :min-count 1 :max-count 1
                      :instance-type "t2.micro" :key-name key-name
                      :security-group-ids [group-id]))
 
