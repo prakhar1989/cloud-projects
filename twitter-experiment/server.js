@@ -78,9 +78,26 @@ function startListening(socket, channel) {
     });
 }
 
+function sendLatestData(socket, channel) {
+    r.connect({host: config.rethinkdb.host, port: config.rethinkdb.port}, function(err, conn) {
+        if (err) throw err;
+        var connection = conn;
+        r.db(config.rethinkdb.db).table(config.rethinkdb.table)
+            .pluck(['id_str', 'geo'])
+            .run(connection).then(function(cursor) {
+                return cursor.toArray();
+            }).then(function(result) {
+                socket.emit(channel, {tweets: result});
+                console.log("Sending off tweets:", result.length);
+            }).error(function(err) {
+                throw err
+            });
+    });
+}
+
 io.on('connection', function(socket) {
     console.log("a user connected");
-    socket.emit('news', {hello: 'world'});
+    sendLatestData(socket, 'tweets');
     startListening(socket, 'tweets');
 });
 
