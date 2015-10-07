@@ -19,8 +19,8 @@
       socket.on('chat message', function(msg) {
         $('#messages').append($('<li>').text(msg));
       });
-      socket.on('new tweets', function(msg) {
-        console.log(tweets);
+      socket.on('tweets', function(msg) {
+        console.log(msg);
       });
     </script>
   </body>
