@@ -1,9 +1,11 @@
 var r = require('rethinkdb');
 var express = require('express');
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+
 var bodyParser = require('body-parser');
 var app = express();
+
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
 // read in the config
 var config = require(__dirname + '/config.js');
@@ -43,7 +45,7 @@ app.use(closeConnection);
 
 // routes
 function getTweets(req, res, next) {
-    r.table(config.rethinkdb.table).pluck(['id_str', 'geo'])
+    r.table(config.rethinkdb.table).pluck(['id_str', 'geo', 'text'])
         .run(req._rdbConn).then(function(cursor) {
             return cursor.toArray();
         }).then(function(result) {
@@ -52,7 +54,27 @@ function getTweets(req, res, next) {
         .finally(next);
 }
 
+function startListening() {
+    r.connect({host: config.rethinkdb.host, port: config.rethinkdb.port}, function(err, conn) {
+        if (err) throw err;
+        var connection = conn;
+        r.db(config.rethinkdb.db).table(config.rethinkdb.table).changes()
+            .run(connection, function(err, cursor) {
+                if (err) throw err;
+                cursor.each(function(err, row) {
+                    if (err) throw err;
+                    console.log(JSON.stringify(row, null, 2));
+                });
+            });
+    });
+}
+
+io.on('connection', function(socket) {
+    console.log("a user connected");
+});
+
 // start listening
-app.listen(config.express.port, function() {
+http.listen(config.express.port, function() {
     console.log('listening on 3000');
+    startListening();
 });
