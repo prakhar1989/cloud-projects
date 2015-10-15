@@ -3,6 +3,8 @@ var r = require('rethinkdb');
 var model      = {},
     connection = null;
 
+//TODO: get rid of repetitive code. looks like shit
+
 model.setup = function() {
     r.connect({host: '127.0.0.1', port: 28015}, function(err, conn) {
         if (err) throw err;
@@ -40,11 +42,6 @@ model.insertTweets = function(tweets) {
             console.log("Total records written:", tweets.length);
         });
     });
-}
-
-
-model.testIt = function() {
-    return 5 * 5;
 }
 
 module.exports = model;
