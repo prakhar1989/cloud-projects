@@ -26,36 +26,45 @@ socket.on('tweets', function(msg) {
     // render the counter
     ReactDOM.render(
         <TweetCounter count={count}/>, 
-        document.getElementById("header")
+        document.getElementById("sidebar")
     );
 
     // add to map
-    L.heatLayer(locations, {maxZoom: 12}).addTo(map);
+    //L.heatLayer(locations, {maxZoom: 12}).addTo(map);
 
     addToGeoJSON(tweets, window.geoJSON);
 
     var pointsLayer = L.mapbox.featureLayer(geoJSON, {
         pointToLayer: function(feature, latlon) {
             return L.circleMarker(latlon,  {
-                fillColor: '#CEE5F2',
+                fillColor: '#AA5042',
                 fillOpacity: 0.7,
                 radius: 5,
                 stroke: false
             });
         }
     }).addTo(map);
-    //pointsLayer.setGeoJSON([window.geoJSON]);
+
+    // setting the tooltip
+    pointsLayer.on('click', function(e) {
+        console.log(e.layer);
+        e.layer.openPopup();
+    });
+
 });
 
 var TweetCounter = React.createClass({
     render: function() {
-        return <div>Tweet count: {this.props.count} </div>
+        return <h1>{this.props.count} </h1>
     }
 });
 
 
 function getGeoPoint(tweet) {
-    var user = "Prakhar", id = "123123123", place = "India";
+    var user = tweet.user.screen_name, 
+        id = tweet.id_str, 
+        place = tweet.place.full_name;
+
     return {
         "type": "Feature", 
         "geometry": {

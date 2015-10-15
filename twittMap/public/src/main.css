@@ -1,0 +1,26 @@
+* { 
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    box-sizing:border-box;
+}
+
+#sidebar {
+    float: left;
+    width: 30%;
+}
+	
+#sidebar h1 {
+    font-size: 72px;
+}
+
+.map {
+    border-left:1px solid #fff;
+    position:absolute;
+    left:25%;
+    width:75%;
+    top:0;
+    bottom:0;
+}
+.pad2 {
+    padding:20px;
+}

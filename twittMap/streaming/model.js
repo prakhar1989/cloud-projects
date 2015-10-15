@@ -3,13 +3,16 @@ var r = require('rethinkdb');
 var model      = {},
     connection = null;
 
-//TODO: get rid of repetitive code. looks like shit
-
-model.setup = function() {
+function runQuery(query) {
     r.connect({host: '127.0.0.1', port: 28015}, function(err, conn) {
         if (err) throw err;
         connection = conn;
+        query();
+    });
+}
 
+model.setup = function() {
+    runQuery(function() {
         r.db('twitter_streaming').tableCreate('jstwitter')
          .run(connection, function(err, result) {
             if (err) throw err;
@@ -19,10 +22,7 @@ model.setup = function() {
 };
 
 model.getCount = function() {
-    r.connect({host: '127.0.0.1', port: 28015}, function(err, conn) {
-        if (err) throw err;
-        connection = conn;
-
+    runQuery(function() {
         r.db('twitter_streaming').table('jstwitter').count()
          .run(connection, function(err, result) {
             if (err) throw err;
@@ -31,15 +31,12 @@ model.getCount = function() {
     });
 }
 
-model.insertTweets = function(tweets) {
-    r.connect({host: '127.0.0.1', port: 28015}, function(err, conn) {
-        if (err) throw err;
-        connection = conn;
-
-        r.db('twitter_streaming').table('jstwitter').insert(tweets)
+model.insertTweet = function(tweet) {
+    runQuery(function() {
+        r.db('twitter_streaming').table('jstwitter').insert(tweet)
          .run(connection, function(err, result) {
             if (err) throw err;
-            console.log("Total records written:", tweets.length);
+            console.log(result);
         });
     });
 }

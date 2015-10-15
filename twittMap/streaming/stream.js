@@ -9,24 +9,11 @@ var client = new Twitter({
   access_token_secret:  "1UhH4UYGXMLl6VFeJl5hzTJf1Y29OTWo7TGCcBaMvUTLZ"
 });
 
-function persistTweet(tweets) {
-    model.insertTweets(tweets);
-    //console.log(tweets);
-    //console.log("http://twitter.com/" + tweet['user']['screen_name'] + "/status/" + tweet.id_str);
-}
-
 client.stream('statuses/sample', function(stream) {
     var tweets = [], count = 0;
     stream.on('data', function(tweet) {
         if (tweet.geo != null) {
-            tweets.push(tweet);
-            count += 1;
-            console.log("Adding tweet");
-        }
-        if (count > 5) { // Batch it in groups of 5
-            persistTweet(tweets);
-            tweets = [];
-            count = 0;
+            model.insertTweet(tweet);
         }
     });
 

@@ -43,9 +43,20 @@ app.route('/tweets').get(getTweets);
 
 app.use(closeConnection);
 
+var queryStructure = {
+    'id_str': true,
+    'geo': true,
+    'place': {
+        'full_name': true
+    },
+    'user': {
+        'screen_name': true
+    }
+};
+
 // routes
 function getTweets(req, res, next) {
-    r.table(config.rethinkdb.table).pluck(['id_str', 'geo', 'text'])
+    r.table(config.rethinkdb.table).pluck(queryStructure)
         .run(req._rdbConn).then(function(cursor) {
             return cursor.toArray();
         }).then(function(result) {
@@ -59,20 +70,16 @@ function startListening(socket, channel) {
         if (err) throw err;
 
         // batching
-        var connection = conn, tweets = [];
+        var connection = conn;
 
         r.db(config.rethinkdb.db).table(config.rethinkdb.table)
-            .pluck(['id_str', 'geo']).changes()
+            .pluck(queryStructure).changes()
             .run(connection, function(err, cursor) {
                 if (err) throw err;
                 cursor.each(function(err, row) {
                     if (err) throw err;
-                    tweets.push(row.new_val);
-                    if (tweets.length == 5) {
-                        socket.emit(channel, {tweets: tweets});
-                        console.log('Sending tweets:', tweets.length);
-                        tweets = [];
-                    }
+                    socket.emit(channel, {tweets: row.new_val});
+                    console.log('Sending new tweet');
                 });
             });
     });
@@ -83,7 +90,7 @@ function sendLatestData(socket, channel) {
         if (err) throw err;
         var connection = conn;
         r.db(config.rethinkdb.db).table(config.rethinkdb.table)
-            .pluck(['id_str', 'geo'])
+            .pluck(queryStructure)
             .run(connection).then(function(cursor) {
                 return cursor.toArray();
             }).then(function(result) {
