@@ -1,13 +1,3 @@
 Cloud Homework
 ===
-
-```
- _________________
-< i can haz cloud >
- -----------------
-        \   ^__^
-         \  (oo)\_______
-            (__)\       )\/\
-                ||----w |
-                ||     ||
-```
+![i can haz cloud](https://imgs.xkcd.com/comics/the_cloud.png)
