@@ -47,7 +47,8 @@ var queryStructure = {
     'id_str': true,
     'geo': true,
     'place': { 'full_name': true },
-    'user': { 'screen_name': true }
+    'user': { 'screen_name': true },
+    'text': true
 };
 
 // routes
