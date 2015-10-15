@@ -46,12 +46,8 @@ app.use(closeConnection);
 var queryStructure = {
     'id_str': true,
     'geo': true,
-    'place': {
-        'full_name': true
-    },
-    'user': {
-        'screen_name': true
-    }
+    'place': { 'full_name': true },
+    'user': { 'screen_name': true }
 };
 
 // routes
@@ -78,7 +74,7 @@ function startListening(socket, channel) {
                 if (err) throw err;
                 cursor.each(function(err, row) {
                     if (err) throw err;
-                    socket.emit(channel, {tweets: row.new_val});
+                    socket.emit(channel, {tweet: row.new_val});
                     console.log('Sending new tweet');
                 });
             });
@@ -103,9 +99,9 @@ function sendLatestData(socket, channel) {
 }
 
 io.on('connection', function(socket) {
-    console.log("a user connected");
-    sendLatestData(socket, 'tweets');
-    startListening(socket, 'tweets');
+    console.log("new user connected");
+    sendLatestData(socket, config.channels.BULK);
+    startListening(socket, config.channels.NEW);
 });
 
 // start listening

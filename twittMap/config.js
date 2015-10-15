@@ -7,5 +7,9 @@ module.exports = {
     },
     express: {
         port: 3000
+    },
+    channels: {
+        BULK: 'TWEETS_BULK',
+        NEW: 'TWEET_NEW',
     }
 }
