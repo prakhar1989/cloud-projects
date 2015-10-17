@@ -28,7 +28,7 @@
     "watch": "watchify -t reactify ./public/src/app.js -o ./public/build/main.min.js -v",
     "dist": "npm run remove-dist && npm run build-standalone",
     "remove-dist": "rm build/*.js",
-    "build-standalone": "NODE_ENV=production browserify -t reactify ./src/app.js | uglifyjs -mc > build/main.min.js"
+    "build-standalone": "NODE_ENV=production browserify -t reactify ./public/src/app.js | uglifyjs -mc > public/build/main.min.js"
   },
   "author": "Prakhar Srivastav <prakhar.srivastav@columbia.edu>",
   "license": "MIT"

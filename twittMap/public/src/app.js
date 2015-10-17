@@ -61,7 +61,7 @@ function addPointstoMap() {
             return L.circleMarker(latlon,  {
                 fillColor: '#AA5042',
                 fillOpacity: 0.7,
-                radius: 5,
+                radius: 3,
                 stroke: false
             });
         }
