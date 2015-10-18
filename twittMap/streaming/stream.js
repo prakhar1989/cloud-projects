@@ -12,7 +12,7 @@ var client = new Twitter({
 });
 
 var ENDPOINT = "statuses/filter";
-var KEYWORDS = ["music", "love", "cricket", "sports", "technology", "beiber", "google", "facebook", "amazon"];
+var KEYWORDS = ["music","cricket", "sports", "technology", "beiber", "google", "facebook", "amazon"];
 
 function startStreaming() {
     var query = KEYWORDS.join(",");

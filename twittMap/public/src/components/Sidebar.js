@@ -1,5 +1,6 @@
 var React = require('react');
 var TweetCounter = require('./TweetCounter');
+var NewTweet = require('./newTweet');
 
 var Sidebar = React.createClass({
     propTypes: {
@@ -40,10 +41,13 @@ var Sidebar = React.createClass({
     handleNewTweet: function(msg) {
         var tweet = msg["tweet"];
         var geoJSON = this.state.geoJSON;
-        geoJSON.features.push(this.getGeoPoint(tweet));
+        var geoTweet = this.getGeoPoint(tweet);
+
+        geoJSON.features.push(geoTweet);
         this.setState({
             tweets: this.state.tweets.concat([tweet]),
-            geoJSON: geoJSON
+            geoJSON: geoJSON,
+            newTweet: geoTweet.properties
         });
 
         this.plotTweetsOnMap();
@@ -62,11 +66,7 @@ var Sidebar = React.createClass({
                 "type": "Point",
                 "coordinates": tweet.geo.coordinates.reverse()
             },
-            "properties": {
-                "title": user + " says - ",
-                "description": "<p>" + text + "</p><a href='" + url + "'>View Tweet</a>",
-                "location": place
-            }
+            "properties": { "user": user, "location": place }
         }
     },
     plotTweetsOnMap: function() {
@@ -92,10 +92,14 @@ var Sidebar = React.createClass({
     },
     render: function() {
         var count = this.state.tweets.length;
+        var lastTweet = this.state.geoJSON.features[count - 1] || {};
+        var lastTweetStats = lastTweet.properties;
         return <div>
             <header> <h1>TwittMap</h1> </header>
             <div className="content">
               <TweetCounter count={count} />
+              {count > 0 ? <NewTweet user={lastTweetStats.user} 
+                  place={lastTweetStats.location} /> : null }
             </div>
           <footer>
               <p>Built by <a href="http://prakhar.me">Prakhar Srivastav</a></p>

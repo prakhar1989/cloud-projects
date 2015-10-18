@@ -17,6 +17,18 @@ body {
     border-color: rgba(0, 0, 0, 0.74902);
     border: 2px;
     border-radius: 5px;
+    -webkit-box-shadow: 0px 0px 21px -8px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 21px -8px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 21px -8px rgba(0,0,0,0.75);
+}
+
+#sidebar .newtweet {
+    margin: 10px 0;
+    font-style: italic;
+    margin-top: 20px;
+    font-size: 12px;
+    color: #AA5042;
+    text-shadow: 0 0 1px #AA5042;
 }
 	
 #sidebar div.counter h1 {
@@ -49,6 +61,7 @@ p { margin: 0; padding: 0 }
 
 #sidebar footer, #sidebar header, #sidebar .content {
     padding: 20px;
+    padding-bottom: 10px;
 }
 
 #sidebar header {
