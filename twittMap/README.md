@@ -1,3 +1,5 @@
+![shot](shot.png)
+
 ### Stream
 ```
 $ npm run stream
