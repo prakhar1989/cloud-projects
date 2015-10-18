@@ -90,7 +90,7 @@ var Sidebar = React.createClass({
             }
         }).addTo(map);
     },
-    render: function() {
+    render() {
         var count = this.state.tweets.length;
         var lastTweet = this.state.geoJSON.features[count - 1] || {};
         var lastTweetStats = lastTweet.properties;
