@@ -37,14 +37,12 @@ var Sidebar = React.createClass({
             filteredTweets: tweets,
             keyword: keyword
         });
-        this.plotTweetsOnMap();
     },
     handleBulkTweets: function(msg) {
         console.log("Connected to the server");
         this.setState({
             tweets: msg['tweets'],
         });
-        this.plotTweetsOnMap();
     },
     handleNewTweet: function(msg) {
         var tweet = msg["tweet"];
@@ -53,10 +51,17 @@ var Sidebar = React.createClass({
         this.setState({
             tweets: tweets
         });
+    },
+    componentDidUpdate: function() {
         this.plotTweetsOnMap();
+        return true;
     },
     getGeoPoint: function(tweet) {
         var coordinates = Array.prototype.slice.call(tweet.geo.coordinates);
+        var place = "";
+        if (tweet.place != undefined && tweet.place.full_name != undefined) {
+            place = tweet.place.full_name
+        }
         return {
             "type": "Feature", 
             "geometry": {
@@ -65,7 +70,7 @@ var Sidebar = React.createClass({
             },
             "properties": { 
                 "user": tweet.user.screen_name,
-                "location": (tweet.place && tweet.place.full_name) || null
+                "location": place
             }
         }
     },
@@ -101,16 +106,14 @@ var Sidebar = React.createClass({
     render() {
         var count = this.state.tweets.length;
         var latestTweet = this.state.tweets[count - 1] || {};
+        var filteredTweets = this.state.filteredTweets;
         return <div>
             <header> <h1>TwittMap</h1> </header>
             <div className="content">
-              <TweetCounter count={count} />
-              {
-                  count > 0 ? 
-                      <NewTweet user={latestTweet.user.screen_name} 
-                                place={latestTweet.place.full_name} />:
-                      null 
-              }
+              <TweetCounter count={count} filteredCount={filteredTweets.length}/>
+              { count > 0 ? 
+                  <NewTweet user={latestTweet.user.screen_name} 
+                            place={latestTweet.place.full_name} />: null}
               <h5>Filter Tweets</h5>
               <KeywordFilter selectedKeyword={this.state.keyword}
                   handleKeywordChange={this.handleKeywordChange}/>
