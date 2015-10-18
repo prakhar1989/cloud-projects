@@ -47,4 +47,11 @@ function classify(tweet) {
     return classification;
 }
 
+function getTrends(woeid) {
+    client.get("trends/place", {id: woeid}, function(error, tweets, response){
+        if(error) throw error;
+        console.log(JSON.stringify(tweets, null, 2));
+    });
+}
+
 startStreaming();

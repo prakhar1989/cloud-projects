@@ -1,6 +1,9 @@
 var React = require('react');
 
 var TweetCounter = React.createClass({
+    propTypes: {
+        count: React.PropTypes.number.isRequired
+    },
     render: function() {
         return (<div>
             <p>Tweet count</p>
