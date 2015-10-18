@@ -4,7 +4,7 @@ module.exports = {
         BULK: 'TWEETS_BULK',
         NEW: 'TWEET_NEW',
     },
-    initView: [14.435, 2.285],
+    initView: [48.458, -14.285],
     initZoom: 2,
     mapId: 'prakhar.nkpoa3m1'
 };

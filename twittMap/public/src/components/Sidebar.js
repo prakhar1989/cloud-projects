@@ -93,9 +93,13 @@ var Sidebar = React.createClass({
     render: function() {
         var count = this.state.tweets.length;
         return <div>
-          <h3>TwittMap</h3>
-          <TweetCounter count={count} />
-          <p>Built by <a href="http://prakhar.me">Prakhar Srivastav</a></p>
+            <header> <h1>TwittMap</h1> </header>
+            <div className="content">
+              <TweetCounter count={count} />
+            </div>
+          <footer>
+              <p>Built by <a href="http://prakhar.me">Prakhar Srivastav</a></p>
+          </footer>
         </div>
     }
 });

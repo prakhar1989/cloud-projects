@@ -6,7 +6,10 @@ var Sidebar = require('./components/Sidebar');
 
 // setting up mapbox
 L.mapbox.accessToken = config.mapboxKey;
-var map = L.mapbox.map('map', config.mapId).setView(config.initView, config.initZoom);
+var map = L.mapbox.map('map', config.mapId, {
+                maxZoom: 11,
+                minZoom: 2
+            }).setView(config.initView, config.initZoom);
 
 ReactDOM.render(
     <Sidebar socket={socket} map={map} />, 

@@ -4,23 +4,68 @@
     box-sizing:border-box;
 }
 
+body {
+    font-family: 'Titillium Web', sans-serif, "Avenir", "Helvetica";
+}
+
 #sidebar {
-    float: left;
-    width: 30%;
+    position: absolute;
+    left: 10px;
+    z-index: 100;
+    width: 360px;
+    background: white;
+    border-color: rgba(0, 0, 0, 0.74902);
+    border: 2px;
+    border-radius: 5px;
 }
 	
-#sidebar h1 {
-    font-size: 72px;
+#sidebar div.counter h1 {
+    color: #50667f;
+    font-size: 60px;
+    margin: 0;
+    line-height: 0.7;
+}
+
+#sidebar div.counter p {
+    margin: 0;
+    color: #d3d3d3;
 }
 
 .map {
     border-left:1px solid #fff;
     position:absolute;
-    left:25%;
-    width:75%;
     top:0;
-    bottom:0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    width: 100%;
 }
+
 .pad2 {
     padding:20px;
 }
+
+p { margin: 0; padding: 0 }
+
+#sidebar footer, #sidebar header, #sidebar .content {
+    padding: 20px;
+}
+
+#sidebar header {
+    border-bottom: 1px solid #dedede;
+    background: #50667f;
+    padding: 2px 20px;
+    color: whitesmoke;
+    border-radius: 3px 3px 0 0;
+}
+
+#sidebar header h1 {
+    margin: 0px;
+    font-size: 24px;
+}
+
+#sidebar footer {
+    border-top: 1px solid #dedede;
+    padding: 10px 20px;
+}
+

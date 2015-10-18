@@ -5,8 +5,8 @@ var TweetCounter = React.createClass({
         count: React.PropTypes.number.isRequired
     },
     render: function() {
-        return (<div>
-            <p>Tweet count</p>
+        return (<div className="counter">
+            <p>Total tweets</p>
             <h1>{this.props.count} </h1>
         </div>)
     }
