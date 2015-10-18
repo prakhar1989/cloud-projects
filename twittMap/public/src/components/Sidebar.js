@@ -11,7 +11,7 @@ var Sidebar = React.createClass({
     getInitialState: function() {
         return {
             tweets: [],
-            keywords: [],
+            keyword: null,
             filteredTweets: []
         }
     },
@@ -21,20 +21,23 @@ var Sidebar = React.createClass({
         socket.on('TWEET_NEW', this.handleNewTweet);
         this.pointsLayer = null;
     },
-    handleKeywordChange: function(keywords) {
-        var tweets = this.state.tweets.filter(function(tweet) {
-            for (var i in keywords) {
-                var key = keywords[i];
-                if (tweet.keywords[key]) {
-                    return true
+    handleKeywordChange: function(keyword) {
+        var tweets;
+        if (keyword == "") {
+            tweets = [];
+        } else {
+            tweets = this.state.tweets.filter(function(tweet) {
+                if (tweet.keywords[keyword]) {
+                    return true;
                 }
-            }
-            return false;
+                return false;
+            });
+        }
+        this.setState({
+            filteredTweets: tweets,
+            keyword: keyword
         });
-        this.updateTweets(tweets);
-    },
-    updateTweets: function(tweets) {
-
+        this.plotTweetsOnMap();
     },
     handleBulkTweets: function(msg) {
         console.log("Connected to the server");
@@ -68,7 +71,9 @@ var Sidebar = React.createClass({
     },
     plotTweetsOnMap: function() {
         var map = this.props.map;
-        var tweets = this.state.tweets;
+        var tweets = this.state.filteredTweets.length > 0 ? 
+                        this.state.filteredTweets : 
+                        this.state.tweets;
 
         // remove layer
         if (this.pointsLayer != null) {
@@ -107,7 +112,8 @@ var Sidebar = React.createClass({
                       null 
               }
               <h5>Filter Tweets</h5>
-              <KeywordFilter handleKeywordChange={this.handleKeywordChange}/>
+              <KeywordFilter selectedKeyword={this.state.keyword}
+                  handleKeywordChange={this.handleKeywordChange}/>
             </div>
           <footer>
               <p>Built by <a href="http://prakhar.me">Prakhar Srivastav</a></p>

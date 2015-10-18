@@ -13,16 +13,16 @@ var KeywordFilter = React.createClass({
         }
     },
     handleChange(val) {
-        var keywords = val.split(',');
-        this.props.handleKeywordChange(keywords);
+        this.props.handleKeywordChange(val);
     },
     render() {
         var options = this.props.keywords.map(function(key) {
             return {value: key, label: key.toUpperCase()}
         });
+        var selectedKeyword = this.props.selectedKeyword;
         return <Select name="form-field-name"
                 options={options}
-                multi={true}
+                value={selectedKeyword}
                 onChange={this.handleChange}/>
     }
 });
