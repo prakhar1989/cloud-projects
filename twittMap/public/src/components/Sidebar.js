@@ -1,6 +1,7 @@
 var React = require('react');
 var TweetCounter = require('./TweetCounter');
-var NewTweet = require('./newTweet');
+var NewTweet = require('./NewTweet');
+var KeywordFilter = require('./KeywordFilter');
 
 var Sidebar = React.createClass({
     propTypes: {
@@ -10,10 +11,8 @@ var Sidebar = React.createClass({
     getInitialState: function() {
         return {
             tweets: [],
-            geoJSON: {
-                "type": "FeatureCollection",
-                "features": []
-            }
+            keywords: [],
+            filteredTweets: []
         }
     },
     componentDidMount:function() {
@@ -22,63 +21,67 @@ var Sidebar = React.createClass({
         socket.on('TWEET_NEW', this.handleNewTweet);
         this.pointsLayer = null;
     },
+    handleKeywordChange: function(keywords) {
+        var tweets = this.state.tweets.filter(function(tweet) {
+            for (var i in keywords) {
+                var key = keywords[i];
+                if (tweet.keywords[key]) {
+                    return true
+                }
+            }
+            return false;
+        });
+        this.updateTweets(tweets);
+    },
+    updateTweets: function(tweets) {
+
+    },
     handleBulkTweets: function(msg) {
         console.log("Connected to the server");
-        var tweets = msg["tweets"];
-        var geoJSON = this.state.geoJSON;
-
-        geoJSON["features"] = tweets.map(function(tweet) {
-            return this.getGeoPoint(tweet);
-        }.bind(this));
-
         this.setState({
             tweets: msg['tweets'],
-            geoJSON: geoJSON
         });
-
         this.plotTweetsOnMap();
     },
     handleNewTweet: function(msg) {
         var tweet = msg["tweet"];
-        var geoJSON = this.state.geoJSON;
-        var geoTweet = this.getGeoPoint(tweet);
-
-        geoJSON.features.push(geoTweet);
+        var tweets = this.state.tweets;
+        tweets.push(tweet);
         this.setState({
-            tweets: this.state.tweets.concat([tweet]),
-            geoJSON: geoJSON,
-            newTweet: geoTweet.properties
+            tweets: tweets
         });
-
         this.plotTweetsOnMap();
     },
     getGeoPoint: function(tweet) {
-        var user = tweet.user.screen_name, 
-            id = tweet.id_str, 
-            text = tweet.text,
-            place = (tweet.place && tweet.place.full_name) || null;
-
-        var url = "http://twitter.com/" +  user + "/status/" + id;
-
+        var coordinates = Array.prototype.slice.call(tweet.geo.coordinates);
         return {
             "type": "Feature", 
             "geometry": {
                 "type": "Point",
-                "coordinates": tweet.geo.coordinates.reverse()
+                "coordinates": coordinates.reverse()
             },
-            "properties": { "user": user, "location": place }
+            "properties": { 
+                "user": tweet.user.screen_name,
+                "location": (tweet.place && tweet.place.full_name) || null
+            }
         }
     },
     plotTweetsOnMap: function() {
         var map = this.props.map;
-        var geoJSON = this.state.geoJSON;
-        
+        var tweets = this.state.tweets;
+
         // remove layer
         if (this.pointsLayer != null) {
             map.removeLayer(this.pointsLayer);
         }
 
-        // add it back
+        // build geoJSON
+        var geoJSON = { "type": "FeatureCollection", "features": [] };
+        geoJSON["features"] = tweets.map(function(tweet) {
+            return this.getGeoPoint(tweet);
+        }.bind(this));
+        
+        // add geoJSON to layer
         this.pointsLayer = L.mapbox.featureLayer(geoJSON, {
             pointToLayer: function(feature, latlon) {
                 return L.circleMarker(latlon,  {
@@ -92,14 +95,19 @@ var Sidebar = React.createClass({
     },
     render() {
         var count = this.state.tweets.length;
-        var lastTweet = this.state.geoJSON.features[count - 1] || {};
-        var lastTweetStats = lastTweet.properties;
+        var latestTweet = this.state.tweets[count - 1] || {};
         return <div>
             <header> <h1>TwittMap</h1> </header>
             <div className="content">
               <TweetCounter count={count} />
-              {count > 0 ? <NewTweet user={lastTweetStats.user} 
-                  place={lastTweetStats.location} /> : null }
+              {
+                  count > 0 ? 
+                      <NewTweet user={latestTweet.user.screen_name} 
+                                place={latestTweet.place.full_name} />:
+                      null 
+              }
+              <h5>Filter Tweets</h5>
+              <KeywordFilter handleKeywordChange={this.handleKeywordChange}/>
             </div>
           <footer>
               <p>Built by <a href="http://prakhar.me">Prakhar Srivastav</a></p>

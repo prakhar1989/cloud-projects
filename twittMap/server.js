@@ -48,7 +48,8 @@ var queryStructure = {
     'geo': true,
     'place': { 'full_name': true },
     'user': { 'screen_name': true },
-    'text': true
+    'text': true,
+    'keywords': true
 };
 
 // routes
@@ -60,6 +61,34 @@ function getTweets(req, res, next) {
             res.send(JSON.stringify(result));
         }).error(handleError(res))
         .finally(next);
+}
+
+function getKeywords() {
+    return r.connect({host: config.rethinkdb.host, port: config.rethinkdb.port}, function(err, conn) {
+        if (err) throw err;
+        var connection = conn;
+        return r.db(config.rethinkdb.db).table(config.rethinkdb.table)
+            .pluck(['keywords']).distinct()
+            .run(connection).then(function(cursor) {
+                return cursor.toArray();
+            }).then(function(results) {
+                var keys = results.map(function(r) {
+                    return Object.keys(r["keywords"])
+                }).reduce(function(arr, key) {
+                    return arr.concat(key)
+                });
+                var distinctKeywords = [];
+                for (var i in keys) {
+                    var key = keys[i];
+                    if (distinctKeywords.indexOf(key) == -1) {
+                        distinctKeywords.push(key)
+                    }
+                }
+                return distinctKeywords
+            }).error(function(err) {
+                throw err
+            });
+    });
 }
 
 function startListening(socket, channel) {

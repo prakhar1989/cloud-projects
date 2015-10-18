@@ -43,6 +43,18 @@ body {
     color: #d3d3d3;
 }
 
+#sidebar h5 {
+    font-size: 18px;
+    margin: 10px 0;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+    color: #6A9086;
+}
+a, a:visited {
+    color: #AA5042;
+    text-decoration: none;
+}
+
 .map {
     border-left:1px solid #fff;
     position:absolute;
@@ -80,5 +92,6 @@ p { margin: 0; padding: 0 }
 #sidebar footer {
     border-top: 1px solid #dedede;
     padding: 10px 20px;
+    font-size: 12px;
 }
 
