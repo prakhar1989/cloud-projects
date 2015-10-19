@@ -49,7 +49,8 @@ var queryStructure = {
     'place': { 'full_name': true },
     'user': { 'screen_name': true },
     'text': true,
-    'keywords': true
+    'keywords': true,
+    'created_at': true
 };
 
 // routes

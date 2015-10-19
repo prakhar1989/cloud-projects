@@ -2,6 +2,7 @@ var React = require('react');
 var TweetCounter = require('./TweetCounter');
 var NewTweet = require('./NewTweet');
 var KeywordFilter = require('./KeywordFilter');
+var TrendChart = require('./TrendChart');
 
 var Sidebar = React.createClass({
     propTypes: {
@@ -107,6 +108,11 @@ var Sidebar = React.createClass({
         var count = this.state.tweets.length;
         var latestTweet = this.state.tweets[count - 1] || {};
         var filteredTweets = this.state.filteredTweets;
+        var dates = filteredTweets
+                .map(t => [new Date(t.created_at).getTime(), 1])
+                .sort((pt1, pt2) => pt1[0] - pt2[0]);
+        var keyword = this.state.keyword;
+
         return <div>
             <header> <h1>TwittMap</h1> </header>
             <div className="content">
@@ -114,9 +120,12 @@ var Sidebar = React.createClass({
               { count > 0 ? 
                   <NewTweet user={latestTweet.user.screen_name} 
                             place={latestTweet.place.full_name} />: null}
+
               <h5>Filter Tweets</h5>
               <KeywordFilter selectedKeyword={this.state.keyword}
                   handleKeywordChange={this.handleKeywordChange}/>
+
+              { filteredTweets.length > 0 ? <TrendChart data={dates} keyword={keyword}/> : null }
             </div>
           <footer>
               <p>Built by <a href="http://prakhar.me">Prakhar Srivastav</a></p>

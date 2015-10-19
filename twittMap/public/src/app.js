@@ -11,6 +11,9 @@ var map = L.mapbox.map('map', config.mapId, {
                 minZoom: 2
             }).setView(config.initView, config.initZoom);
 
+// change zoom location
+new L.Control.Zoom({ position: 'topright' }).addTo(map);
+
 ReactDOM.render(
     <Sidebar socket={socket} map={map} />, 
     document.getElementById('sidebar')
