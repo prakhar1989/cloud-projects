@@ -1,0 +1,73 @@
+(venv)➜  twittMap git:(master) eb init
+
+Select a default region
+1) us-east-1 : US East (N. Virginia)
+2) us-west-1 : US West (N. California)
+3) us-west-2 : US West (Oregon)
+4) eu-west-1 : EU (Ireland)
+5) eu-central-1 : EU (Frankfurt)
+6) ap-southeast-1 : Asia Pacific (Singapore)
+7) ap-southeast-2 : Asia Pacific (Sydney)
+8) ap-northeast-1 : Asia Pacific (Tokyo)
+9) sa-east-1 : South America (Sao Paulo)
+10) cn-north-1 : China (Beijing)
+(default is 3): 1
+
+Enter Application Name
+(default is "twittMap"):
+Application twittMap has been created.
+
+It appears you are using Node.js. Is this correct?
+(y/n): y
+Do you want to set up SSH for your instances?
+(y/n): y
+
+Select a keypair.
+1) prakhar
+2) twitter
+3) [ Create new KeyPair ]
+(default is 3): 2
+
+(venv)➜  twittMap git:(master) ✗ eb create
+Enter Environment Name
+(default is twittMap-dev):
+Enter DNS CNAME prefix
+(default is twittMap-dev):
+
+2.0+ Platforms require a service role. We will attempt to create one for you. You can specify your own role using the --service-role option.
+Type "view" to see the policy, or just press ENTER to continue:
+Creating application version archive "app-151019_114923".
+Uploading: [##################################################] 100% Done...
+Environment details for: twittMap-dev
+  Application name: twittMap
+  Region: us-east-1
+  Deployed Version: app-151019_114923
+  Environment ID: e-zmxtedwrdj
+  Platform: 64bit Amazon Linux 2015.03 v2.0.1 running Node.js
+  Tier: WebServer-Standard
+  CNAME: twittMap-dev.elasticbeanstalk.com
+  Updated: 2015-10-19 15:50:10.785000+00:00
+Printing Status:
+INFO: createEnvironment is starting.
+INFO: Using elasticbeanstalk-us-east-1-685580971598 as Amazon S3 storage bucket for environment data.
+ -- Events -- (safe to Ctrl+C)
+INFO: Environment health has transitioned to Pending. There are no instances.
+INFO: Created load balancer named: awseb-e-z-AWSEBLoa-1DPTMVTM49KQZ
+ -- Events -- (safe to Ctrl+C)
+INFO: Created security group named: awseb-e-zmxtedwrdj-stack-AWSEBSecurityGroup-BS8HNUL6ER0O
+ -- Events -- (safe to Ctrl+C)
+INFO: Created Auto Scaling launch configuration named: awseb-e-zmxtedwrdj-stack-AWSEBAutoScalingLaunchConfiguration-9SP46UP9YDRZ
+INFO: Added instance [i-fe7b1941] to your environment.
+INFO: Waiting for EC2 instances to launch. This may take a few minutes.
+INFO: Created Auto Scaling group named: awseb-e-zmxtedwrdj-stack-AWSEBAutoScalingGroup-1FIDLK393ESHZ
+INFO: Created Auto Scaling group policy named: arn:aws:autoscaling:us-east-1:685580971598:scalingPolicy:ec0da26f-c70a-4240-9a4b-b4ba85f29133:autoScalingGroupName/awseb-e-zmxtedwrdj-stack-AWSEBAutoScalingGroup-1FIDLK393ESHZ:policyName/awseb-e-zmxtedwrdj-stack-AWSEBAutoScalingScaleUpPolicy-1BQGFZRJN5HYA
+INFO: Created Auto Scaling group policy named: arn:aws:autoscaling:us-east-1:685580971598:scalingPolicy:1f135966-3221-4e42-862b-92aee755dffe:autoScalingGroupName/awseb-e-zmxtedwrdj-stack-AWSEBAutoScalingGroup-1FIDLK393ESHZ:policyName/awseb-e-zmxtedwrdj-stack-AWSEBAutoScalingScaleDownPolicy-XXGRIHGIJC9V
+INFO: Created CloudWatch alarm named: awseb-e-zmxtedwrdj-stack-AWSEBCloudwatchAlarmHigh-MUPLVNNVRBTL
+INFO: Created CloudWatch alarm named: awseb-e-zmxtedwrdj-stack-AWSEBCloudwatchAlarmLow-129SDCRADEIC3
+ -- Events -- (safe to Ctrl+C)
+
+INFO: Environment health has transitioned from Pending to Ok.
+INFO: Successfully launched environment: twittMap-dev
+
+(venv)➜  twittMap git:(master) eb open #opens http://twittmap-dev.elasticbeanstalk.com/
+

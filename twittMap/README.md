@@ -1,5 +1,8 @@
 ![shot](shot.png)
 
+### Demo
+View the [app](http://twittmap-dev.elasticbeanstalk.com/) on beanstalk.
+
 ### TwittMap
 
 - Get tweets from twitter and store it in DB (you can store only the ones that have the geo-location data to save time filtering the data later)
@@ -8,6 +11,10 @@
 - You need to display the tweets on the map in real-time. As new tweets come in, you need dynamically display them in the map without the need to press a button or refresh the page.
 - The trending aspect of it is open ended.Last year some students implemented clustering algorithms on the tweets. You also show charts with statistics on each keyword in the  dropdown, using timestamp to show trends in different periods of time,e.t.c.  These are just some examples and if you come up with something fascinating, you will be awarded extra  credit.
 
+### Stack
+- RethinkDB (storage)
+- Node.js (server)
+- React (frontend)
 
 ### Prod
 

@@ -2,6 +2,7 @@
 node_modules*
 misc/*
 *.swp
+.DS_Store
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
