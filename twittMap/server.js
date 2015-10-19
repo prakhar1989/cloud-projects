@@ -16,6 +16,11 @@ app.use(express.static(__dirname + "/public"));
 // parse application/json
 app.use(bodyParser.json());
 
+
+// init db config
+config["rethinkdb"] = process.env.NODE_ENV == 'development' ? 
+                    config.rethinkdb_dev : config.rethinkdb;
+                
 // middleware that gets the connection to the db
 // and makes it available to the request object
 function createConnection(req, res, next) {
