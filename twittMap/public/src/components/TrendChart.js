@@ -17,7 +17,7 @@ var TrendChart = React.createClass({
                 dataGrouping: {
                     approximation: 'sum',
                     units: [
-                        ['minute', [1]]
+                        ['hour', [1]]
                     ],
                     forced: true
                 }
