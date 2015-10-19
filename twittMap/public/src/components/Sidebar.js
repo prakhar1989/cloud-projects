@@ -67,7 +67,7 @@ var Sidebar = React.createClass({
             "type": "Feature", 
             "geometry": {
                 "type": "Point",
-                "coordinates": coordinates.reverse()
+                "coordinates": coordinates
             },
             "properties": { 
                 "user": tweet.user.screen_name,
@@ -86,23 +86,25 @@ var Sidebar = React.createClass({
             map.removeLayer(this.pointsLayer);
         }
 
-        // build geoJSON
-        var geoJSON = { "type": "FeatureCollection", "features": [] };
-        geoJSON["features"] = tweets.map(function(tweet) {
-            return this.getGeoPoint(tweet);
-        }.bind(this));
-        
-        // add geoJSON to layer
-        this.pointsLayer = L.mapbox.featureLayer(geoJSON, {
-            pointToLayer: function(feature, latlon) {
-                return L.circleMarker(latlon,  {
-                    fillColor: '#AA5042',
-                    fillOpacity: 0.7,
-                    radius: 3,
-                    stroke: false
-                });
-            }
-        }).addTo(map);
+        var clusterLayer = new L.MarkerClusterGroup();
+
+        tweets.forEach(function(tweet) {
+            var coords = tweet.geo.coordinates;
+            var title = tweet.user.screen_name + "says";
+
+            var marker = L.marker(new L.LatLng(coords[0], coords[1]), {
+                icon: L.mapbox.marker.icon({
+                    'marker-color': 'AA5042',
+                    'marker-size': 'small'
+                }),
+                title: title
+            });
+            marker.bindPopup(title);
+            clusterLayer.addLayer(marker);
+        });
+
+        this.pointsLayer = clusterLayer;
+        map.addLayer(this.pointsLayer);
     },
     render() {
         var count = this.state.tweets.length;
