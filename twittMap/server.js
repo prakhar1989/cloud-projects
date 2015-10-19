@@ -141,6 +141,6 @@ io.on('connection', function(socket) {
 });
 
 // start listening
-http.listen(config.express.port, function() {
+http.listen(process.env.PORT || config.express.port, function() {
     console.log('listening on 3000');
 });
