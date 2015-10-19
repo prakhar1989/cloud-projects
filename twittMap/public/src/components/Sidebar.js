@@ -90,16 +90,18 @@ var Sidebar = React.createClass({
 
         tweets.forEach(function(tweet) {
             var coords = tweet.geo.coordinates;
-            var title = tweet.user.screen_name + "says";
+            var user = tweet.user.screen_name;
+            var url  = "http://twitter.com/" + user + "/status/" + tweet.id_str;
+            var text = "<strong><p>"+ user + "</strong></p>" + tweet.text + " <a href='" + url + "' target=_blank>View tweet</a>";
 
             var marker = L.marker(new L.LatLng(coords[0], coords[1]), {
                 icon: L.mapbox.marker.icon({
                     'marker-color': 'AA5042',
                     'marker-size': 'small'
                 }),
-                title: title
+                description: text
             });
-            marker.bindPopup(title);
+            marker.bindPopup(text);
             clusterLayer.addLayer(marker);
         });
 
