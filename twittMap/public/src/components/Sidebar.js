@@ -117,6 +117,16 @@ var Sidebar = React.createClass({
                 .sort((pt1, pt2) => pt1[0] - pt2[0]);
         var keyword = this.state.keyword;
 
+        if (count === 0) {
+            return <div>
+                <header> <h1>TwittMap</h1> </header>
+                <div className="content" style={{textAlign:'center'}}>
+                    <img src="imgs/loader.gif" />
+                    <h5>Assembling Tweets ...</h5>
+                </div>
+            </div>
+        }
+
         return <div>
             <header> <h1>TwittMap</h1> </header>
             <div className="content">
