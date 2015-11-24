@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -10,8 +11,24 @@ import (
 )
 
 // processing a single msg
-func processMsg(msg *sqs.Message) {
+func processMsg(msg *sqs.Message, svc *sqs.SQS, queueUrl string) {
+	// process
 	fmt.Println("Processing: ", *msg.MessageId)
+
+	// delete the message
+	deleteTweet(msg, svc, queueUrl)
+}
+
+func deleteTweet(msg *sqs.Message, svc *sqs.SQS, queueUrl string) {
+	_, err := svc.DeleteMessage(
+		&sqs.DeleteMessageInput{
+			QueueUrl:      aws.String(queueUrl),
+			ReceiptHandle: aws.String(*msg.ReceiptHandle),
+		},
+	)
+	if err != nil {
+		fmt.Println("Unable to delete", err)
+	}
 }
 
 func main() {
@@ -30,7 +47,6 @@ func main() {
 		panic(err)
 	}
 	queueUrl = *resp.QueueUrl
-	fmt.Println("URL: ", queueUrl)
 
 	for {
 		// get the messages
@@ -40,13 +56,13 @@ func main() {
 				MaxNumberOfMessages: aws.Int64(10),
 			},
 		)
-		fmt.Println("Got", len(msgs.Messages), " messages")
+		log.Println("Got", len(msgs.Messages), "messages")
 		if e != nil {
 			panic(e)
 		}
 
 		for _, msg := range msgs.Messages {
-			processMsg(msg)
+			go processMsg(msg, svc, queueUrl)
 		}
 		// wait for a second for hitting again
 		time.Sleep(10 * time.Second)
