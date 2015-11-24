@@ -1,9 +1,14 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/bitly/go-simplejson"
 )
 
 func main() {
@@ -12,18 +17,39 @@ func main() {
 
 	client := &http.Client{}
 
-	req, err := http.NewRequest("POST", API_URL, nil)
+	// the request body data
+	m := map[string]interface{}{
+		"text_list": []string{
+			"some text to test",
+			"some more text",
+		},
+	}
+
+	// preparing the request
+	mJson, _ := json.Marshal(m)
+	contentReader := bytes.NewReader(mJson)
+	req, err := http.NewRequest("POST", API_URL, contentReader)
 	if err != nil {
 		log.Fatal(err)
 	}
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Authorization", API_TOKEN)
-	req.BodyType = "hello"
 
+	// make the request
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(resp)
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	js, err := simplejson.NewJson(body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(js)
 
 }
