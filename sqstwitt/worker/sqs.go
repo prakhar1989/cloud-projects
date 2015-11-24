@@ -16,7 +16,7 @@ func processMsg(msg *sqs.Message, svc *sqs.SQS, queueUrl string) {
 	fmt.Println("Processing: ", *msg.MessageId)
 
 	// delete the message
-	deleteTweet(msg, svc, queueUrl)
+	//deleteTweet(msg, svc, queueUrl)
 }
 
 func deleteTweet(msg *sqs.Message, svc *sqs.SQS, queueUrl string) {
@@ -27,17 +27,19 @@ func deleteTweet(msg *sqs.Message, svc *sqs.SQS, queueUrl string) {
 		},
 	)
 	if err != nil {
-		fmt.Println("Unable to delete", err)
+		log.Println("Unable to delete", err)
 	}
 }
 
 func main() {
-	// init
-	const queueName = "tweetsQueue"
+	const QUEUE_NAME = "tweetsQueue"
+	const WAIT_TIME = 10
+
+	// initialize
 	svc := sqs.New(session.New(), &aws.Config{Region: aws.String("us-east-1")})
 
 	params := &sqs.CreateQueueInput{
-		QueueName: aws.String(queueName),
+		QueueName: aws.String(QUEUE_NAME),
 	}
 
 	// get the queue url
@@ -65,7 +67,7 @@ func main() {
 			go processMsg(msg, svc, queueUrl)
 		}
 		// wait for a second for hitting again
-		time.Sleep(10 * time.Second)
+		time.Sleep(WAIT_TIME * time.Second)
 	}
 
 }
