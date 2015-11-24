@@ -1,0 +1,40 @@
+{
+  "name": "twitter-assign1",
+  "version": "0.0.1",
+  "description": "class assignment",
+  "main": "server.js",
+  "dependencies": {
+    "aws-sdk": "^2.2.19",
+    "babelify": "^5.0.4",
+    "body-parser": "^1.14.1",
+    "browserify": "^9.0.3",
+    "express": "^4.13.3",
+    "merge": "^1.2.0",
+    "natural": "^0.2.1",
+    "react": "^0.14.0",
+    "react-dom": "^0.14.0",
+    "react-highcharts": "^4.0.0",
+    "react-select": "^0.7.0",
+    "reactify": "^1.1.0",
+    "rethinkdb": "^2.1.1",
+    "socket.io": "^1.3.7",
+    "supervisor": "^0.9.1",
+    "twitter": "^1.2.5",
+    "uglify-js": "^2.4.20",
+    "underscore": "^1.8.3",
+    "watchify": "^3.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "NODE_ENV=production node server.js",
+    "dev": "NODE_ENV=development ./node_modules/supervisor/lib/cli-wrapper.js server.js",
+    "stream": "node streaming/stream.js",
+    "watch": "watchify -t babelify ./public/src/app.js -o ./public/build/main.min.js -v",
+    "build": "npm run remove-dist && npm run build-standalone",
+    "remove-dist": "rm ./public/build/*.js",
+    "build-standalone": "NODE_ENV=production browserify -t babelify ./public/src/app.js | uglifyjs -mc > public/build/main.min.js"
+  },
+  "author": "Prakhar Srivastav <prakhar.srivastav@columbia.edu>",
+  "license": "MIT"
+}

@@ -57,7 +57,6 @@
      :public-dns-name public-dns-name
      :private-ip-address private-ip-address}))
 
-
 (defn index-of-any
   "Java indexOfAny to Clojure"
   [s coll]
