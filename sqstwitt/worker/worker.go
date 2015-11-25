@@ -22,6 +22,7 @@ var dbSession *r.Session
 var snsSvc *sns.SNS
 var sqsSvc *sqs.SQS
 var queueUrl string
+var topicArn string
 
 // called before the main function. Sets the DB session
 // pointer correctly
@@ -72,7 +73,30 @@ func processMsg(msg *sqs.Message) {
 	log.Println("Saving tweet with id", id)
 
 	// delete the message
-	// deleteMsg(msg)
+	deleteMsg(msg)
+
+	// send notification
+	notify(tweetJson)
+}
+
+// notify publishes a SNS notification to the
+// topic with topicArn as its topic arn
+func notify(tweetJson *simplejson.Json) {
+	b, err := tweetJson.MarshalJSON()
+	if err != nil {
+		log.Println("Unable to convert to string")
+		return
+	}
+	msg := string(b)
+	params := &sns.PublishInput{
+		Message:  aws.String(msg),
+		Subject:  aws.String("New Tweet"),
+		TopicArn: aws.String(topicArn),
+	}
+	_, err = snsSvc.Publish(params)
+	if err != nil {
+		log.Println("Unable to send notification")
+	}
 }
 
 // deletes a message from the queue
@@ -139,17 +163,29 @@ func main() {
 	const QUEUE_NAME = "tweetsQueue"
 	const WAIT_TIME = 10
 
-	params := &sqs.CreateQueueInput{
-		QueueName: aws.String(QUEUE_NAME),
-	}
-
 	// get the queue url
-	resp, err := sqsSvc.CreateQueue(params)
+	resp, err := sqsSvc.CreateQueue(
+		&sqs.CreateQueueInput{
+			QueueName: aws.String(QUEUE_NAME),
+		},
+	)
 	if err != nil {
 		panic(err)
 	}
 	queueUrl = *resp.QueueUrl
 
+	// get the topic arn
+	snsresp, snserr := snsSvc.CreateTopic(
+		&sns.CreateTopicInput{
+			Name: aws.String("tweet-topic"),
+		},
+	)
+	if snserr != nil {
+		panic(err)
+	}
+	topicArn = *snsresp.TopicArn
+
+	// begin the polling on queue
 	for {
 		// get the messages
 		msgs, e := sqsSvc.ReceiveMessage(
