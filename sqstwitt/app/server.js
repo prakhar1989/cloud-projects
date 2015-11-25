@@ -3,6 +3,7 @@ var express = require('express');
 
 var bodyParser = require('body-parser');
 var app = express();
+var SNSClient = require('aws-snsclient');
 
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
@@ -45,6 +46,7 @@ function handleError(res) {
 app.use(createConnection);
 
 app.route('/tweets').get(getTweets);
+app.route('/notify').post(handleNotification);
 
 app.use(closeConnection);
 
@@ -67,6 +69,20 @@ function getTweets(req, res, next) {
             res.send(JSON.stringify(result));
         }).error(handleError(res))
         .finally(next);
+}
+
+// handle message here
+var sns = SNSClient(function(err, msg) {
+    if (msg.Type !== "Notification") {
+        return;
+    }
+    var tweet = JSON.parse(msg.Message);
+    console.log("http://twitter.com/" + tweet.user.screen_name + "/status/" + tweet.id_str, JSON.stringify(tweet.sentiment, null, 2));
+
+});
+
+function handleNotification(req, res, next) {
+    return sns(req, res);
 }
 
 function getKeywords() {

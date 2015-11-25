@@ -5,6 +5,7 @@
   "main": "server.js",
   "dependencies": {
     "aws-sdk": "^2.2.19",
+    "aws-snsclient": "^0.2.0",
     "babelify": "^5.0.4",
     "body-parser": "^1.14.1",
     "browserify": "^9.0.3",
