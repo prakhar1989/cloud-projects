@@ -60,6 +60,8 @@ var queryStructure = {
     'created_at': true
 };
 
+var socketObj;
+
 // routes
 function getTweets(req, res, next) {
     r.table(config.rethinkdb.table).pluck(queryStructure)
@@ -77,7 +79,8 @@ var sns = SNSClient(function(err, msg) {
         return;
     }
     var tweet = JSON.parse(msg.Message);
-    console.log("http://twitter.com/" + tweet.user.screen_name + "/status/" + tweet.id_str, JSON.stringify(tweet.sentiment, null, 2));
+    //console.log("http://twitter.com/" + tweet.user.screen_name + "/status/" + tweet.id_str, JSON.stringify(tweet.sentiment, null, 2));
+    socketObj.emit(config.channels.NEW, {tweet: tweet});
 
 });
 
@@ -113,6 +116,9 @@ function getKeywords() {
     });
 }
 
+/*
+ * This function is not being used now since all our updates are being
+ * sent by the SNS service
 function startListening(socket, channel) {
     r.connect({host: config.rethinkdb.host, port: config.rethinkdb.port}, function(err, conn) {
         if (err) throw err;
@@ -132,6 +138,7 @@ function startListening(socket, channel) {
             });
     });
 }
+*/
 
 function sendLatestData(socket, channel) {
     r.connect({host: config.rethinkdb.host, port: config.rethinkdb.port}, function(err, conn) {
@@ -151,9 +158,10 @@ function sendLatestData(socket, channel) {
 }
 
 io.on('connection', function(socket) {
+    socketObj = socket;
     console.log("new user connected");
     sendLatestData(socket, config.channels.BULK);
-    startListening(socket, config.channels.NEW);
+    //startListening(socket, config.channels.NEW);
 });
 
 // start listening
