@@ -11,17 +11,22 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/sns"
 	"github.com/aws/aws-sdk-go/service/sqs"
 	"github.com/bitly/go-simplejson"
 	r "github.com/dancannon/gorethink"
 )
 
 var dbSession *r.Session
+var snsSvc *sns.SNS
+var sqsSvc *sqs.SQS
 
 // called before the main function. Sets the DB session
 // pointer correctly
 func init() {
 	var err error
+
+	// DB configuration
 	dbSession, err = r.Connect(r.ConnectOpts{
 		Address:  "localhost:28015",
 		Database: "twitter_streaming",
@@ -30,11 +35,18 @@ func init() {
 		log.Fatal(err)
 	}
 	dbSession.SetMaxOpenConns(10)
+
+	// initialize the SQS Service
+	sqsSvc = sqs.New(session.New(), &aws.Config{Region: aws.String("us-east-1")})
+
+	// initialize the SNS Service
+	snsSvc = sns.New(session.New(), &aws.Config{Region: aws.String("us-east-1")})
+	fmt.Printf("%T", snsSvc)
 }
 
 // processing a single msg from the queue and then
 // subsequently deletes it
-func processMsg(msg *sqs.Message, svc *sqs.SQS, queueUrl string) {
+func processMsg(msg *sqs.Message, queueUrl string) {
 	// process
 	tweetBody := []byte(*msg.Body)
 	tweetJson, err := simplejson.NewJson(tweetBody)
@@ -59,12 +71,12 @@ func processMsg(msg *sqs.Message, svc *sqs.SQS, queueUrl string) {
 	log.Println("Saving tweet with id", id)
 
 	// delete the message
-	//deleteTweet(msg, svc, queueUrl)
+	//deleteTweet(msg, queueUrl)
 }
 
 // deletes a message from the queue
-func deleteMsg(msg *sqs.Message, svc *sqs.SQS, queueUrl string) {
-	_, err := svc.DeleteMessage(
+func deleteMsg(msg *sqs.Message, queueUrl string) {
+	_, err := sqsSvc.DeleteMessage(
 		&sqs.DeleteMessageInput{
 			QueueUrl:      aws.String(queueUrl),
 			ReceiptHandle: aws.String(*msg.ReceiptHandle),
@@ -126,16 +138,13 @@ func main() {
 	const QUEUE_NAME = "tweetsQueue"
 	const WAIT_TIME = 10
 
-	// initialize
-	svc := sqs.New(session.New(), &aws.Config{Region: aws.String("us-east-1")})
-
 	params := &sqs.CreateQueueInput{
 		QueueName: aws.String(QUEUE_NAME),
 	}
 
 	// get the queue url
 	var queueUrl string
-	resp, err := svc.CreateQueue(params)
+	resp, err := sqsSvc.CreateQueue(params)
 	if err != nil {
 		panic(err)
 	}
@@ -143,7 +152,7 @@ func main() {
 
 	for {
 		// get the messages
-		msgs, e := svc.ReceiveMessage(
+		msgs, e := sqsSvc.ReceiveMessage(
 			&sqs.ReceiveMessageInput{
 				QueueUrl:            aws.String(queueUrl),
 				MaxNumberOfMessages: aws.Int64(10),
@@ -155,8 +164,7 @@ func main() {
 		}
 
 		for _, msg := range msgs.Messages {
-			//go processMsg(msg, svc, queueUrl)
-			go processMsg(msg, svc, queueUrl)
+			go processMsg(msg, queueUrl)
 		}
 		// wait for a second for hitting again
 		time.Sleep(WAIT_TIME * time.Second)
