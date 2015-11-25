@@ -13,7 +13,24 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sqs"
 	"github.com/bitly/go-simplejson"
+	r "github.com/dancannon/gorethink"
 )
+
+var dbSession *r.Session
+
+// called before the main function. Sets the DB session
+// pointer correctly
+func init() {
+	var err error
+	dbSession, err = r.Connect(r.ConnectOpts{
+		Address:  "localhost:28015",
+		Database: "twitter_streaming",
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	dbSession.SetMaxOpenConns(10)
+}
 
 // processing a single msg from the queue and then
 // subsequently deletes it
@@ -30,11 +47,16 @@ func processMsg(msg *sqs.Message, svc *sqs.SQS, queueUrl string) {
 	if err != nil {
 		log.Println("failed to classify tweet")
 	}
-	body, err := simplejson.NewJson(resp)
+	sentiment, err := simplejson.NewJson(resp)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(body)
+	// save this to the db
+	tweetJson.Set("sentiment", sentiment)
+
+	// insert tweet into DB
+	id := insertTweetInDb(tweetJson)
+	log.Println("Saving tweet with id", id)
 
 	// delete the message
 	//deleteTweet(msg, svc, queueUrl)
@@ -83,6 +105,23 @@ func classifyText(text string) ([]byte, error) {
 	return ioutil.ReadAll(resp.Body)
 }
 
+// inserts the tweet in the db
+func insertTweetInDb(tweetJson *simplejson.Json) string {
+	// delete this pesky key - creates issues with rethinkdb
+	tweetJson.Del("id")
+	m, err := tweetJson.Map()
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+	result, err := r.Table("jstwitter").Insert(m).RunWrite(dbSession)
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+	return result.GeneratedKeys[0]
+}
+
 func main() {
 	const QUEUE_NAME = "tweetsQueue"
 	const WAIT_TIME = 10
@@ -116,6 +155,7 @@ func main() {
 		}
 
 		for _, msg := range msgs.Messages {
+			//go processMsg(msg, svc, queueUrl)
 			go processMsg(msg, svc, queueUrl)
 		}
 		// wait for a second for hitting again
