@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -24,6 +23,16 @@ var sqsSvc *sqs.SQS
 var queueUrl string
 var topicArn string
 
+// consts
+const DB_ADDRESS = "localhost:28015"
+const DB_NAME = "twitter_streaming"
+const DB_TABLE = "jstwitter"
+const API_URL = "https://api.monkeylearn.com/v2/classifiers/cl_qkjxv9Ly/classify/?"
+const API_TOKEN = "Token 8c47cd62c949d26430c775850a6bfdfe798091ac"
+const QUEUE_NAME = "tweetsQueue"
+const WAIT_TIME = 10 // time to wait between each SQS poll
+const TOPIC_NAME = "tweet-topic"
+
 // called before the main function. Sets the DB session
 // pointer correctly
 func init() {
@@ -31,8 +40,8 @@ func init() {
 
 	// DB configuration
 	dbSession, err = r.Connect(r.ConnectOpts{
-		Address:  "localhost:28015",
-		Database: "twitter_streaming",
+		Address:  DB_ADDRESS,
+		Database: DB_NAME,
 	})
 	if err != nil {
 		log.Fatal(err)
@@ -65,7 +74,8 @@ func processMsg(msg *sqs.Message) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// save this to the db
+
+	// add a new key and save this to the db
 	tweetJson.Set("sentiment", sentiment)
 
 	// insert tweet into DB
@@ -114,9 +124,6 @@ func deleteMsg(msg *sqs.Message) {
 
 // classifies a string using the monkeylearn api
 func classifyText(text string) ([]byte, error) {
-	const API_URL = "https://api.monkeylearn.com/v2/classifiers/cl_qkjxv9Ly/classify/?"
-	const API_TOKEN = "Token 8c47cd62c949d26430c775850a6bfdfe798091ac"
-
 	client := &http.Client{}
 
 	// the request body data
@@ -148,20 +155,18 @@ func insertTweetInDb(tweetJson *simplejson.Json) string {
 	tweetJson.Del("id")
 	m, err := tweetJson.Map()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return ""
 	}
-	result, err := r.Table("jstwitter").Insert(m).RunWrite(dbSession)
+	result, err := r.Table(DB_TABLE).Insert(m).RunWrite(dbSession)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return ""
 	}
 	return result.GeneratedKeys[0]
 }
 
 func main() {
-	const QUEUE_NAME = "tweetsQueue"
-	const WAIT_TIME = 10
 
 	// get the queue url
 	resp, err := sqsSvc.CreateQueue(
@@ -177,7 +182,7 @@ func main() {
 	// get the topic arn
 	snsresp, snserr := snsSvc.CreateTopic(
 		&sns.CreateTopicInput{
-			Name: aws.String("tweet-topic"),
+			Name: aws.String(TOPIC_NAME),
 		},
 	)
 	if snserr != nil {
