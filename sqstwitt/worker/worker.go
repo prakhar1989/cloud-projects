@@ -17,9 +17,11 @@ import (
 	r "github.com/dancannon/gorethink"
 )
 
+// globals
 var dbSession *r.Session
 var snsSvc *sns.SNS
 var sqsSvc *sqs.SQS
+var queueUrl string
 
 // called before the main function. Sets the DB session
 // pointer correctly
@@ -41,12 +43,11 @@ func init() {
 
 	// initialize the SNS Service
 	snsSvc = sns.New(session.New(), &aws.Config{Region: aws.String("us-east-1")})
-	fmt.Printf("%T", snsSvc)
 }
 
 // processing a single msg from the queue and then
 // subsequently deletes it
-func processMsg(msg *sqs.Message, queueUrl string) {
+func processMsg(msg *sqs.Message) {
 	// process
 	tweetBody := []byte(*msg.Body)
 	tweetJson, err := simplejson.NewJson(tweetBody)
@@ -71,11 +72,11 @@ func processMsg(msg *sqs.Message, queueUrl string) {
 	log.Println("Saving tweet with id", id)
 
 	// delete the message
-	//deleteTweet(msg, queueUrl)
+	// deleteMsg(msg)
 }
 
 // deletes a message from the queue
-func deleteMsg(msg *sqs.Message, queueUrl string) {
+func deleteMsg(msg *sqs.Message) {
 	_, err := sqsSvc.DeleteMessage(
 		&sqs.DeleteMessageInput{
 			QueueUrl:      aws.String(queueUrl),
@@ -143,7 +144,6 @@ func main() {
 	}
 
 	// get the queue url
-	var queueUrl string
 	resp, err := sqsSvc.CreateQueue(params)
 	if err != nil {
 		panic(err)
@@ -164,7 +164,7 @@ func main() {
 		}
 
 		for _, msg := range msgs.Messages {
-			go processMsg(msg, queueUrl)
+			go processMsg(msg)
 		}
 		// wait for a second for hitting again
 		time.Sleep(WAIT_TIME * time.Second)
