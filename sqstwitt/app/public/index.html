@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+  <head>
+    <title>TweetMap!</title>
+    <meta charset="utf-8">
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="TwittMap">
+    <meta property="og:title" content="Plotting live twitter data on a map"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:locale" content="en_US"/>
+    <meta property="og:url" content="http://twittmap-dev.elasticbeanstalk.com/"/>
+    <meta property="og:description" content="Tweets on a map for a class assignment"/>
+    <meta property="og:image" content="http://i.imgur.com/X4rNxd5.png"/>
+
+    <!-- styles -->
+    <link href='https://fonts.googleapis.com/css?family=Titillium+Web:400,700' rel='stylesheet' type='text/css'>
+    <link href='/styles/main.css' rel='stylesheet' />
+    <link href='/styles/reactselect.css' rel='stylesheet' />
+    <link href='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.css' rel='stylesheet' />
+    <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.css' rel='stylesheet' />
+
+    <!-- scripts -->
+    <script src='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.js'></script>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/leaflet.markercluster.js'></script>
+  </head>
+  <body>
+    <div id='sidebar'></div>
+    <div id='map' class='map pad2'>Map</div>
+    <script src="/build/main.min.js"></script>
+  </body>
+</html>

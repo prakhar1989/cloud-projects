@@ -1,5 +1,5 @@
 {
-  "name": "twitter-assign1",
+  "name": "sqs-twitt",
   "version": "0.0.1",
   "description": "class assignment",
   "main": "server.js",
@@ -27,10 +27,10 @@
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "NODE_ENV=production node server.js",
-    "dev": "NODE_ENV=development ./node_modules/supervisor/lib/cli-wrapper.js server.js",
+    "start": "NODE_ENV=production node ./app/server.js",
+    "dev": "NODE_ENV=development ./node_modules/supervisor/lib/cli-wrapper.js ./app/server.js",
     "stream": "node streaming/stream.js",
-    "watch": "watchify -t babelify ./public/src/app.js -o ./public/build/main.min.js -v",
+    "watch": "watchify -t babelify ./app/public/src/app.js -o ./app/public/build/main.min.js -v",
     "build": "npm run remove-dist && npm run build-standalone",
     "remove-dist": "rm ./public/build/*.js",
     "build-standalone": "NODE_ENV=production browserify -t babelify ./public/src/app.js | uglifyjs -mc > public/build/main.min.js"

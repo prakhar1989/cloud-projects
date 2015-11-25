@@ -1,0 +1,169 @@
+* { 
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    box-sizing:border-box;
+}
+
+body {
+    font-family: 'Titillium Web', sans-serif, "Avenir", "Helvetica";
+}
+
+#sidebar {
+    position: absolute;
+    left: 10px;
+    z-index: 100;
+    width: 360px;
+    background: white;
+    border-color: rgba(0, 0, 0, 0.74902);
+    border: 2px;
+    border-radius: 5px;
+    -webkit-box-shadow: 0px 0px 21px -8px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 21px -8px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 21px -8px rgba(0,0,0,0.75);
+}
+
+#sidebar .newtweet {
+    margin: 10px 0;
+    font-style: italic;
+    margin-top: 20px;
+    font-size: 12px;
+    color: #AA5042;
+    text-shadow: 0 0 1px #AA5042;
+}
+	
+#sidebar div.counter h1 {
+    color: #50667f;
+    font-size: 60px;
+    margin: 0;
+    line-height: 0.7;
+}
+
+#sidebar div.counter p {
+    margin: 0;
+    color: #d3d3d3;
+}
+
+#sidebar h5 {
+    font-size: 18px;
+    margin: 10px 0;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+    color: #6A9086;
+}
+a, a:visited {
+    color: #AA5042;
+    text-decoration: none;
+}
+
+.map {
+    border-left:1px solid #fff;
+    position:absolute;
+    top:0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    width: 100%;
+}
+
+#sidebar span.highlight {
+    font-size: 50px;
+    color: #6A9086;
+}
+
+.pad2 {
+    padding:20px;
+}
+
+p { margin: 0; padding: 0 }
+
+#sidebar footer, #sidebar header, #sidebar .content {
+    padding: 20px;
+    padding-bottom: 10px;
+}
+
+#sidebar header {
+    border-bottom: 1px solid #dedede;
+    background: #50667f;
+    padding: 2px 20px;
+    color: whitesmoke;
+    border-radius: 3px 3px 0 0;
+}
+
+#sidebar header h1 {
+    margin: 0px;
+    font-size: 24px;
+}
+
+#sidebar footer {
+    border-top: 1px solid #dedede;
+    padding: 10px 20px;
+    font-size: 12px;
+}
+
+/* marker cluster styles */
+.marker-cluster-small {
+	background-color: rgba(98, 122, 146, 0.6);
+    color: white;
+	}
+.marker-cluster-small div {
+	background-color: rgba(98, 122, 146, 0.6);
+    color: white;
+	}
+
+.marker-cluster-medium {
+	background-color: rgba(98, 122, 146, 0.8);
+    color: white;
+	}
+.marker-cluster-medium div {
+	background-color: rgba(98, 122, 146, 0.6);
+    color: white;
+	}
+
+.marker-cluster-large {
+	background-color: rgba(98, 122, 146, 0.8);
+    color: white;
+	}
+.marker-cluster-large div {
+	background-color: rgba(98, 122, 146, 0.8);
+    color: white;
+	}
+
+	/* IE 6-8 fallback colors */
+.leaflet-oldie .marker-cluster-small {
+	background-color: rgb(181, 226, 140);
+	}
+.leaflet-oldie .marker-cluster-small div {
+	background-color: rgb(110, 204, 57);
+	}
+
+.leaflet-oldie .marker-cluster-medium {
+	background-color: rgb(241, 211, 87);
+	}
+.leaflet-oldie .marker-cluster-medium div {
+	background-color: rgb(240, 194, 12);
+	}
+
+.leaflet-oldie .marker-cluster-large {
+	background-color: rgb(253, 156, 115);
+	}
+.leaflet-oldie .marker-cluster-large div {
+	background-color: rgb(241, 128, 23);
+}
+
+.marker-cluster {
+	background-clip: padding-box;
+	border-radius: 20px;
+	}
+.marker-cluster div {
+	width: 30px;
+	height: 30px;
+	margin-left: 5px;
+	margin-top: 5px;
+	text-align: center;
+	border-radius: 15px;
+    font-family: 'Titillium Web', sans-serif, "Avenir", "Helvetica";
+    font-size: 12px;
+	}
+.marker-cluster span {
+	line-height: 30px;
+}
