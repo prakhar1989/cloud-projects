@@ -20,16 +20,17 @@ var client = new Twitter({
 });
 
 var ENDPOINT = "statuses/filter";
-var KEYWORDS = ["music","cricket", "sports", "technology", "beiber", "google", "facebook", "amazon"];
+var KEYWORDS = ["depressed","fun", "happy", "shit", "fuck", "bad", "awesome","party"];
 
 
 function startStreaming() {
     var query = KEYWORDS.join(",");
 
-    client.stream(ENDPOINT, {track: query}, function(stream){
+    client.stream(ENDPOINT, {track: query, lang: "en"}, function(stream){
         var tweets = [], count = 0;
         stream.on('data', function(tweet) {
             if (tweet.geo != null) {
+                console.log(tweet.text);
                 tweet['keywords'] = classify(tweet);
                 // save tweet in database
                 //model.insertTweet(tweet);
