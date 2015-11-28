@@ -22,18 +22,19 @@ var client = new Twitter({
 var ENDPOINT = "statuses/filter";
 var KEYWORDS = ["depressed","fun", "happy", "shit", "fuck", "bad", "awesome","party"];
 
+var LANGUAGES = ['en', 'fr', 'es', 'de', 'it', 'pt', 'ru', 'ar'];
 
 function startStreaming() {
     var query = KEYWORDS.join(",");
+    var lang = LANGUAGES.join(",");
 
-    client.stream(ENDPOINT, {track: query, lang: "en"}, function(stream){
+    client.stream(ENDPOINT, {track: query, language: lang}, function(stream){
         var tweets = [], count = 0;
         stream.on('data', function(tweet) {
             if (tweet.geo != null) {
-                console.log(tweet.text);
                 tweet['keywords'] = classify(tweet);
                 // save tweet in database
-                //model.insertTweet(tweet);
+                // model.insertTweet(tweet);
 
                 var message = {
                     MessageBody: JSON.stringify(tweet),

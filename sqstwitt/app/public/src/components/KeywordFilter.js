@@ -8,8 +8,7 @@ var KeywordFilter = React.createClass({
     getDefaultProps: function() {
         return {
             selectedKeyword: null,
-            keywords: ["amazon", "google", "sports", "cricket", "trump",
-                       "love", "facebook", "music", "technology"]
+            keywords: ["depressed","fun", "happy", "shit", "fuck", "bad", "awesome", "party"]
         }
     },
     handleChange(val) {

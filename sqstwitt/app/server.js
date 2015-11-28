@@ -56,6 +56,7 @@ var queryStructure = {
     'place': { 'full_name': true },
     'user': { 'screen_name': true },
     'text': true,
+    'sentiment': true,
     'keywords': true,
     'created_at': true
 };

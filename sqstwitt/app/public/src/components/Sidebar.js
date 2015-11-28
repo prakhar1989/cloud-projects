@@ -2,6 +2,7 @@ var React = require('react');
 var TweetCounter = require('./TweetCounter');
 var NewTweet = require('./NewTweet');
 var KeywordFilter = require('./KeywordFilter');
+var TrendColumnChart = require('./TrendColumnChart');
 var TrendChart = require('./TrendChart');
 
 var Sidebar = React.createClass({
@@ -133,13 +134,15 @@ var Sidebar = React.createClass({
               <TweetCounter count={count} filteredCount={filteredTweets.length}/>
               { count > 0 ? 
                   <NewTweet user={latestTweet.user.screen_name} 
-                            place={latestTweet.place.full_name} />: null}
+                            place={latestTweet.place.full_name}
+                            sentiment={latestTweet.sentiment} />: null}
 
               <h5>Filter Tweets</h5>
               <KeywordFilter selectedKeyword={this.state.keyword}
                   handleKeywordChange={this.handleKeywordChange}/>
 
               { filteredTweets.length > 0 ? <TrendChart data={dates} keyword={keyword}/> : null }
+              <TrendColumnChart />
             </div>
           <footer>
               <p>Built by <a href="http://prakhar.me">Prakhar Srivastav</a></p>

@@ -12,6 +12,8 @@ body {
     position: absolute;
     left: 10px;
     z-index: 100;
+    max-height: 650px;
+    overflow-y: auto;
     width: 360px;
     background: white;
     border-color: rgba(0, 0, 0, 0.74902);
@@ -30,10 +32,24 @@ body {
     color: #AA5042;
     text-shadow: 0 0 1px #AA5042;
 }
-	
+
+#sidebar .newtweet .mood {
+    float: right;
+    margin-top: -80px;
+    text-align: center;
+}
+
+#sidebar .newtweet .mood span {
+    display: block;
+    color: #d3d3d3;
+    text-shadow: none;
+    font-size: 15px;
+    font-style: normal;
+}
+
 #sidebar div.counter h1 {
     color: #50667f;
-    font-size: 60px;
+    font-size: 50px;
     margin: 0;
     line-height: 0.7;
 }
