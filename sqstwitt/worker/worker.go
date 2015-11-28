@@ -1,11 +1,10 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -27,8 +26,9 @@ var topicArn string
 const DB_ADDRESS = "localhost:28015"
 const DB_NAME = "twitter_streaming"
 const DB_TABLE = "jstwitter"
-const API_URL = "https://api.monkeylearn.com/v2/classifiers/cl_qkjxv9Ly/classify/?"
-const API_TOKEN = "Token 8c47cd62c949d26430c775850a6bfdfe798091ac"
+
+const API_URL = "http://gateway-a.watsonplatform.net/calls/text/TextGetTextSentiment"
+const API_TOKEN = "e1a28650a0f1e2a9fdf3503e8af1a1b2ef230dc0"
 const QUEUE_NAME = "tweetsQueue"
 const WAIT_TIME = 10 // time to wait between each SQS poll
 const TOPIC_NAME = "tweet-topic"
@@ -55,6 +55,19 @@ func init() {
 	snsSvc = sns.New(session.New(), &aws.Config{Region: aws.String("us-east-1")})
 }
 
+// generateApiURL returns a URL for Alchemy text
+// sentiment analysis API
+func generateApiURL(text string) string {
+	u, _ := url.Parse(API_URL)
+	q := u.Query()
+	q.Set("apikey", API_TOKEN)
+	q.Set("outputMode", "json")
+	q.Set("showSourceText", "1")
+	q.Set("text", text)
+	u.RawQuery = q.Encode()
+	return u.String()
+}
+
 // processing a single msg from the queue and then
 // subsequently deletes it
 func processMsg(msg *sqs.Message) {
@@ -65,6 +78,8 @@ func processMsg(msg *sqs.Message) {
 		log.Println("unable to parse tweet")
 		return
 	}
+
+	// ask the classifier to get sentiment
 	text := tweetJson.Get("text").MustString()
 	resp, err := classifyText(text)
 	if err != nil {
@@ -75,8 +90,14 @@ func processMsg(msg *sqs.Message) {
 		log.Fatal(err)
 	}
 
+	// if sentiment is blank
+	docSenti := sentiment.Get("docSentiment").MustMap()
+	if docSenti == nil {
+		return
+	}
+
 	// add a new key and save this to the db
-	tweetJson.Set("sentiment", sentiment)
+	tweetJson.Set("sentiment", docSenti)
 
 	// insert tweet into DB
 	id := insertTweetInDb(tweetJson)
@@ -124,25 +145,8 @@ func deleteMsg(msg *sqs.Message) {
 
 // classifies a string using the monkeylearn api
 func classifyText(text string) ([]byte, error) {
-	client := &http.Client{}
-
-	// the request body data
-	m := map[string]interface{}{
-		"text_list": [1]string{text},
-	}
-
-	// preparing the request
-	mJson, _ := json.Marshal(m)
-	contentReader := bytes.NewReader(mJson)
-	req, err := http.NewRequest("POST", API_URL, contentReader)
-	if err != nil {
-		log.Print(err)
-	}
-	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Authorization", API_TOKEN)
-
 	// make the request
-	resp, err := client.Do(req)
+	resp, err := http.Get(generateApiURL(text))
 	if err != nil {
 		log.Print(err)
 	}
@@ -196,7 +200,7 @@ func main() {
 		msgs, e := sqsSvc.ReceiveMessage(
 			&sqs.ReceiveMessageInput{
 				QueueUrl:            aws.String(queueUrl),
-				MaxNumberOfMessages: aws.Int64(10),
+				MaxNumberOfMessages: aws.Int64(1),
 			},
 		)
 		log.Println("Got", len(msgs.Messages), "messages")
