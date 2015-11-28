@@ -200,7 +200,7 @@ func main() {
 		msgs, e := sqsSvc.ReceiveMessage(
 			&sqs.ReceiveMessageInput{
 				QueueUrl:            aws.String(queueUrl),
-				MaxNumberOfMessages: aws.Int64(1),
+				MaxNumberOfMessages: aws.Int64(10),
 			},
 		)
 		log.Println("Got", len(msgs.Messages), "messages")
