@@ -1,11 +1,19 @@
 var React = require('react');
 
 var Highcharts = require('react-highcharts/dist/bundle/Highstock');
-window.charts = Highcharts;
+var _ = require('lodash');
 
 var TrendColumnChart = React.createClass({
     render: function() {
-        var data = this.props.data;
+        var data = _.chain(this.props.data)
+                 .map((x) => x.sentiment.type)
+                 .countBy((x) => x)
+                 .pairs()
+                 .map((x) => {
+                     return {name: x[0], y: x[1], drilldown: x[0]}
+                 })
+                 .value()
+
         var config = {
             chart: { 
                 type: "column", 
@@ -14,22 +22,19 @@ var TrendColumnChart = React.createClass({
             rangeSelector: { enabled: false },
             navigator: { enabled: false },
             legend: { enabled: false },
-            scrollbar: { enabled: false },
+            scrollbar: { 
+                enabled: false 
+            },
             xAxis: {
                 labels: {
                     enabled: false
                 }
             },
             series: [{
-            name: 'Brands',
-            colorByPoint: true,
-            data: [{ name: 'Microsoft Internet Explorer', y: 56.33, drilldown: 'Microsoft Internet Explorer'
-                }, { name: 'Chrome', y: 24.03, drilldown: 'Chrome'
-                }, { name: 'Firefox', y: 10.38, drilldown: 'Firefox'
-                }, { name: 'Safari', y: 4.77, drilldown: 'Safari'
-                }, { name: 'Opera', y: 0.91, drilldown: 'Opera' 
-                }, { name: 'Proprietary or Undetectable', y: 0.2, drilldown: null } ]
-                }],
+                name: 'Sentiment',
+                colorByPoint: true,
+                data: data
+            }],
             drilldown: {
                 series: [{
                 name: 'Microsoft Internet Explorer',

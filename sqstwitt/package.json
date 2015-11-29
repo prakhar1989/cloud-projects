@@ -10,6 +10,7 @@
     "body-parser": "^1.14.1",
     "browserify": "^9.0.3",
     "express": "^4.13.3",
+    "lodash": "^3.10.1",
     "merge": "^1.2.0",
     "natural": "^0.2.1",
     "react": "^0.14.0",
