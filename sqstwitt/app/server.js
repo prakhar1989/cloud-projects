@@ -80,9 +80,7 @@ var sns = SNSClient(function(err, msg) {
         return;
     }
     var tweet = JSON.parse(msg.Message);
-    //console.log("http://twitter.com/" + tweet.user.screen_name + "/status/" + tweet.id_str, JSON.stringify(tweet.sentiment, null, 2));
     socketObj.emit(config.channels.NEW, {tweet: tweet});
-
 });
 
 function handleNotification(req, res, next) {

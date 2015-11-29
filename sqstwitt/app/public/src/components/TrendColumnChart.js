@@ -2,7 +2,6 @@ var React = require('react');
 
 var Highcharts = require('react-highcharts/dist/bundle/Highstock');
 var _ = require('lodash');
-window._ = _;
 
 var TrendColumnChart = React.createClass({
     getDrillDownSeries(item, tweets) {
@@ -30,6 +29,7 @@ var TrendColumnChart = React.createClass({
                 type: "column", 
                 height: 200
             },
+            colors: ["#59C9A5", "#F08A4B", "#92374D"],
             rangeSelector: { enabled: false },
             navigator: { enabled: false },
             legend: { enabled: false },
@@ -37,8 +37,12 @@ var TrendColumnChart = React.createClass({
                 enabled: false 
             },
             xAxis: {
+                categories: ['positive', 'neutral', 'negative'],
                 labels: {
-                    enabled: false
+                    formatter: function() {
+                        var cats = ['positive', 'neutral', 'negative'];
+                        return cats[this.value];
+                    }
                 }
             },
             series: [{
