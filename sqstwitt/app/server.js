@@ -53,7 +53,7 @@ app.use(closeConnection);
 var queryStructure = {
     'id_str': true,
     'geo': true,
-    'place': { 'full_name': true },
+    'place': { 'full_name': true, 'country': true },
     'user': { 'screen_name': true },
     'text': true,
     'sentiment': true,
