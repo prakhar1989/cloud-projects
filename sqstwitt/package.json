@@ -34,8 +34,8 @@
     "stream": "node streaming/stream.js",
     "watch": "watchify -t babelify ./app/public/src/app.js -o ./app/public/build/main.min.js -v",
     "build": "npm run remove-dist && npm run build-standalone",
-    "remove-dist": "rm ./public/build/*.js",
-    "build-standalone": "NODE_ENV=production browserify -t babelify ./public/src/app.js | uglifyjs -mc > public/build/main.min.js"
+    "remove-dist": "rm ./app/public/build/*.js",
+    "build-standalone": "NODE_ENV=production browserify -t babelify ./app/public/src/app.js | uglifyjs -mc > app/public/build/main.min.js"
   },
   "author": "Prakhar Srivastav <prakhar.srivastav@columbia.edu>",
   "license": "MIT"
