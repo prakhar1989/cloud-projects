@@ -15,7 +15,7 @@
     "natural": "^0.2.1",
     "react": "^0.14.0",
     "react-dom": "^0.14.0",
-    "react-highcharts": "^4.0.0",
+    "react-highcharts": "^5.0.6",
     "react-select": "^0.7.0",
     "reactify": "^1.1.0",
     "rethinkdb": "^2.1.1",
@@ -34,7 +34,7 @@
     "stream": "node streaming/stream.js",
     "watch": "watchify -t babelify ./app/public/src/app.js -o ./app/public/build/main.min.js -v",
     "build": "npm run remove-dist && npm run build-standalone",
-    "remove-dist": "rm ./app/public/build/*.js",
+    "remove-dist": "rm ./app/public/build/*.min.js",
     "build-standalone": "NODE_ENV=production browserify -t babelify ./app/public/src/app.js | uglifyjs -mc > app/public/build/main.min.js"
   },
   "author": "Prakhar Srivastav <prakhar.srivastav@columbia.edu>",
