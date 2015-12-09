@@ -2,6 +2,7 @@ var React = require('react');
 
 var Highcharts = require('react-highcharts/dist/bundle/Highstock');
 var _ = require('lodash');
+window.lodash = _;
 
 var TrendColumnChart = React.createClass({
     getDrillDownSeries(item, tweets) {
@@ -14,6 +15,7 @@ var TrendColumnChart = React.createClass({
         return { name: item, id: item, data: data }
     },
     render: function() {
+        window.testingdata = this.props.data;
         var data = _.chain(this.props.data)
                  .map((x) => x.sentiment.type)
                  .countBy((x) => x)
