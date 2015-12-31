@@ -7,7 +7,7 @@ This is a repository of projects that I did for the *Cloud Computing and Big Dat
 Fortunately, the professor gave full freedom to use your tech stack of choice which give me a good avenue to try out some technologies in real-world projects.
 
 - [Clojure](http://clojure.org/)
-- [Golang](golang.org)
+- [Golang](http://golang.org)
 - [Node.js](http://expressjs.com/)  
 - [RethinkDB](http://rethinkdb.com/)
 - [React](http://facebook.github.io/react/)
